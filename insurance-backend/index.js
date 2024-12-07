@@ -35,35 +35,36 @@ const lit = new LitService();
   try {
     await lit.connect();
 
-    const message = "Hello, Lit Protocol!";
-    const accessControlConditions = [
-      {
-        contractAddress: "",
-        standardContractType: "",
-        chain: "ethereum",
-        method: "eth_getBalance",
-        parameters: [":userAddress", "latest"],
-        returnValueTest: {
-          comparator: ">=",
-          value: "1000000000000",
-        },
-      },
-    ];
+    // const message = "Hello, Lit Protocol!";
+    // const accessControlConditions = [
+    //   {
+    //     contractAddress: "",
+    //     standardContractType: "",
+    //     chain: "ethereum",
+    //     method: "eth_getBalance",
+    //     parameters: [":userAddress", "latest"],
+    //     returnValueTest: {
+    //       comparator: ">=",
+    //       value: "1000000000000",
+    //     },
+    //   },
+    // ];
 
-    const { ciphertext, dataToEncryptHash } = await lit.encryptString(
-      message,
-      accessControlConditions
-    );
-    console.log("Encrypted Message:", ciphertext);
-    console.log("Data Hash:", dataToEncryptHash);
+    // const { ciphertext, dataToEncryptHash } = await lit.encryptString(
+    //   message,
+    //   accessControlConditions
+    // );
+    // console.log("Encrypted Message:", ciphertext);
+    // console.log("Data Hash:", dataToEncryptHash);
 
-    // Example: Get Session Signatures
-    const sessionSigs = await lit.getSessionSignatures();
-    console.log("Session Signatures:", sessionSigs);
+    // // Example: Get Session Signatures
+    // const sessionSigs = await lit.getSessionSignatures();
+    // console.log("Session Signatures:", sessionSigs);
 
     
 
-    // Disconnect when done
+    // // Disconnect when done
+    await lit.litCode();
     await lit.disconnect();
   } catch (error) {
     console.error("Error:", error);
