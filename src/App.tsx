@@ -16,19 +16,21 @@ const App: React.FC = () => (
 export default App;
 
 // import { useState } from "react";
+// import OpenAI from "openai";
 // import {
 //   LitNodeClient,
 //   decryptToString,
 //   encryptString,
 // } from "@lit-protocol/lit-node-client";
 // import { LIT_NETWORK } from "@lit-protocol/constants";
-// import { LitContracts } from "@lit-protocol/contracts-sdk";
+// // import { LitContracts } from "@lit-protocol/contracts-sdk";
 // import * as ethers from "ethers";
 // import {
 //   LitAbility,
 //   LitAccessControlConditionResource,
 //   createSiweMessageWithRecaps,
 //   generateAuthSig,
+//   LitActionResource,
 // } from "@lit-protocol/auth-helpers";
 
 // function App() {
@@ -213,6 +215,100 @@ export default App;
 //     }
 //   };
 
+//   const litAction = async () => {
+//     const wallet = new ethers.Wallet(
+//       "842d48f8f29f383f5f1abcc2572d83e658ad526a360de8d688e0768342fc621c"
+//     );
+
+//     console.log(await wallet.getAddress());
+
+//     if (litNodeClient) {
+//       // const { capacityDelegationAuthSig } =
+//       //   await litNodeClient.createCapacityDelegationAuthSig({
+//       //     uses: "10",
+//       //     dAppOwnerWallet: wallet,
+//       //     capacityTokenId: capacityTokenIdStr,
+//       //     delegateeAddresses: [await wallet.getAddress()],
+//       //   });
+//       const latestBlockHash = await litNodeClient.getLatestBlockhash();
+
+//       const authNeededCallback = async (params: {
+//         uri?: any;
+//         expiration?: any;
+//         resourceAbilityRequests?: any;
+//       }) => {
+//         if (!params.uri) {
+//           throw new Error("uri is required");
+//         }
+//         if (!params.expiration) {
+//           throw new Error("expiration is required");
+//         }
+
+//         if (!params.resourceAbilityRequests) {
+//           throw new Error("resourceAbilityRequests is required");
+//         }
+
+//         // Create the SIWE message
+//         const toSign = await createSiweMessageWithRecaps({
+//           uri: params.uri,
+//           expiration: params.expiration,
+//           resources: params.resourceAbilityRequests,
+//           walletAddress: await wallet.getAddress(),
+//           nonce: latestBlockHash,
+//           litNodeClient: litNodeClient,
+//         });
+
+//         // Generate the authSig
+//         const authSig = await generateAuthSig({
+//           signer: wallet,
+//           toSign,
+//         });
+
+//         return authSig;
+//       };
+
+//       const litResource = new LitAccessControlConditionResource("*");
+
+//       const sessionSigs = await litNodeClient.getSessionSigs({
+//         chain: "baseSepolia",
+//         expiration: new Date(Date.now() + 1000 * 60 * 10).toISOString(),
+//         resourceAbilityRequests: [
+//           {
+//             resource: new LitActionResource("*"),
+//             ability: LitAbility.LitActionExecution,
+//           },
+//         ],
+//         authNeededCallback,
+//       });
+
+//       const _litActionCode = async () => {
+//         try {
+//           const response = await fetch(
+//             "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin"
+//           );
+//           if (!response.ok) {
+//             throw new Error("Network response was not ok");
+//           }
+//           const data = await response.json(); // assuming the API returns JSON
+//           console.log(data);
+//         } catch (error) {
+//           console.error("Error fetching data: ", error); // Handle any errors
+//         }
+//       };
+
+//       const litActionCode = `(${_litActionCode.toString()})();`;
+
+//       console.log(litActionCode);
+//       const _response = await litNodeClient.executeJs({
+//         sessionSigs: sessionSigs,
+//         code: litActionCode,
+//         jsParams: {},
+//       });
+
+//       console.log(_response);
+//     }
+//   };
+
 //   const disconnectFromLit = () => {
 //     if (litNodeClient) {
 //       litNodeClient.disconnect();
@@ -237,6 +333,11 @@ export default App;
 //       {litNodeClient && (
 //         <button onClick={decrypt} style={{ marginLeft: "10px" }}>
 //           Decrypt
+//         </button>
+//       )}
+//       {litNodeClient && (
+//         <button onClick={litAction} style={{ marginLeft: "10px" }}>
+//           LitAction
 //         </button>
 //       )}
 //     </>
