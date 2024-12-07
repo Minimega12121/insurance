@@ -53,11 +53,52 @@ class LitService {
     return decrypted;
   }
 
+  // async transferNativeToken(to, amount) {
+  //   try {
+  //     const INFURA_PROJECT_URL ="https://base-sepolia.infura.io/v3/e56cb4196c874e378dc41d4a81e697b3";
+  //     const PRIVATE_KEY = "0xabf9989497966f655d7cb397f1e3868259c060a3a7920c20f3a563392fb9cb3b";
+  
+  //     // Set up the provider
+  //     const provider = new ethers.JsonRpcProvider(INFURA_PROJECT_URL);
+  
+  //     // Create a wallet instance with the private key and connect it to the provider
+  //     const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
+  
+  //     // Ensure recipient address is valid
+  //     if (!ethers.isAddress(to)) {
+  //       throw new Error("Invalid recipient address.");
+  //     }
+  
+  //     // Convert amount to Wei (smallest unit of ETH)
+  //     const amountInWei = ethers.parseUnits(amount.toString(), "ether");
+  
+  //     console.log(`Sending ${amount} ETH to ${to}...`);
+  
+  //     // Send transaction
+  //     const tx = await wallet.sendTransaction({
+  //       to, // Recipient address
+  //       value: amountInWei, // Amount in Wei
+  //       gasPrice: ethers.parseUnits("500", "gwei"), // Gas price
+  //     });
+  
+  //     console.log("Transaction submitted. Hash:", tx.hash);
+  
+  //     // Wait for the transaction to be mined
+  //     const receipt = await tx.wait();
+  //     console.log("Transaction confirmed in block:", receipt.blockNumber);
+  
+  //     return receipt;
+  //   } catch (error) {
+  //     console.error("Error transferring native token:", error);
+  //     throw error;
+  //   }
+  // }
+
   async getSessionSignatures() {
     const INFURA_PROJECT_URL =
-      "https://mainnet.infura.io/v3/e56cb4196c874e378dc41d4a81e697b3";
+      process.env.INFURA_PROJECT_URL;
     const PRIVATE_KEY =
-      "0xabf9989497966f655d7cb397f1e3868259c060a3a7920c20f3a563392fb9cb3b";
+      process.env.PRIVATE_KEY;
     const provider = new ethers.JsonRpcProvider(INFURA_PROJECT_URL);
     const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
     const signer = wallet;

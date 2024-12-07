@@ -12,36 +12,36 @@ const BasePage: React.FC<{
   const [responseData, setResponseData] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          "https://onchain-agent-demo-backend-architdabral123.replit.app/api/chat", 
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              input: "Patricia experienced a severe allergic reaction and went to an emergency room for treatment. The treatment was deemed medically necessary by the attending physician. No coverage limits have been exceeded. Cost of Treatment: 0.002 Wallet: 0xfcd1e86925C9c066d31AacC78c9e7De32b4574Ae",
-              conversation_id: 0,
-            }),
-          }
-        );
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         "https://onchain-agent-demo-backend-architdabral123.replit.app/api/chat", 
+  //         {
+  //           method: "POST",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //           },
+  //           body: JSON.stringify({
+  //             input: "Patricia experienced a severe allergic reaction and went to an emergency room for treatment. The treatment was deemed medically necessary by the attending physician. No coverage limits have been exceeded. Cost of Treatment: 0.002 Wallet: 0xfcd1e86925C9c066d31AacC78c9e7De32b4574Ae",
+  //             conversation_id: 0,
+  //           }),
+  //         }
+  //       );
 
-        if (response.ok) {
-          const data = await response.json(); // Parse the JSON response
-          setResponseData(data); // Update state with the parsed response
-        } else {
-          setErrorMessage(`Failed to fetch data: ${response.statusText}`);
-        }
-      } catch (error) {
-        setErrorMessage(`Error fetching data: ${error.message}`);
-      }
-    };
+  //       if (response.ok) {
+  //         const data = await response.json(); // Parse the JSON response
+  //         setResponseData(data); // Update state with the parsed response
+  //       } else {
+  //         setErrorMessage(`Failed to fetch data: ${response.statusText}`);
+  //       }
+  //     } catch (error) {
+  //       setErrorMessage(`Error fetching data: ${error.message}`);
+  //     }
+  //   };
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
 
   return (
     <div className="min-h-screen bg-blue-500 flex items-center justify-center">

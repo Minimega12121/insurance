@@ -2,6 +2,8 @@ import express from "express";
 const app = express();
 import cors from "cors";
 import LitService from "./lit.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 const corsOptions = {
   origin: "http://localhost:5173",
@@ -18,6 +20,7 @@ app.post("/encrypt", async (req, res) => {
   if(!ciphertext || !dataToEncryptHash) {
     return res.status(400).json({ message: "Invalid Request" });
   }
+  console.log("Request Body:", req.body);
 });
 
 const PORT = 5000;

@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Upload } from "lucide-react";
 import { attestData } from "@/attestations/create_schema";
-import { ethers } from 'ethers';
+import { ethers } from "ethers";
 import { EAS, NO_EXPIRATION } from "@ethereum-attestation-service/eas-sdk";
-import { GraphQLClient, gql } from 'graphql-request';
+import { GraphQLClient, gql } from "graphql-request";
 
-const CommonContent: React.FC<{ pageType: "insurance" | "health" }> = ({ pageType }) => {
+const CommonContent: React.FC<{ pageType: "insurance" | "health" }> = ({
+  pageType,
+}) => {
   const [file, setFile] = useState<File | null>(null);
   const [result, setResult] = useState<string>("");
   const [fileContents, setFileContents] = useState<string>("");
@@ -54,9 +56,33 @@ const CommonContent: React.FC<{ pageType: "insurance" | "health" }> = ({ pageTyp
         return;
       }
     }
-
-    
   };
+
+  // useEffect(() => {
+  //   const giveData = async () => {
+  //     try {
+  //       const response = await fetch("http://localhost:5000/encrypt", {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify({
+  //           ciphertext: "hello world",
+  //           dataToEncryptHash: "0x1234567890",
+  //         }),
+  //       });
+  //       if (!response.ok) {
+  //         throw new Error("Request failed with status " + response.status);
+  //       }
+
+  //       const data = await response.json();
+  //       console.log("Response:", data);
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   };
+  //   giveData();
+  // });
 
   const handleSubmitUser = async () => {
     if (file) {
@@ -64,7 +90,7 @@ const CommonContent: React.FC<{ pageType: "insurance" | "health" }> = ({ pageTyp
         const contents = await readFileContents(file);
         setFileContents(contents);
         console.log(contents);
-        const client = new GraphQLClient('https://sepolia.easscan.org/graphql');
+        const client = new GraphQLClient("https://sepolia.easscan.org/graphql");
 
         const query = gql`
           query Attestation($id: String!) {
@@ -89,11 +115,10 @@ const CommonContent: React.FC<{ pageType: "insurance" | "health" }> = ({ pageTyp
         const response = await client.request(query, variables);
         console.log("GraphQL response:", response);
 
-
         // // console.log("yaofdy");
         // if (typeof window.ethereum !== "undefined") {
         //   const EASContractAddress = "0xC2679fBD37d54388Ce493F1DB75320D236e1815e"; // Sepolia v0.26
-        //   const provider = new ethers.providers.Web3Provider(window.ethereum);     
+        //   const provider = new ethers.providers.Web3Provider(window.ethereum);
         //   const eas = new EAS(EASContractAddress);
         //   eas.connect(provider);
         //   const uid = "0x2238f03eb415824d725e809253f0c3928e87898cca44eb4121e4ff2815ceccb1";
@@ -145,31 +170,33 @@ const CommonContent: React.FC<{ pageType: "insurance" | "health" }> = ({ pageTyp
     <div className="bg-white p-8 rounded-2xl shadow-2xl border border-gray-100 ">
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center">
-          <h2 className="text-3xl font-bold text-gray-800">Upload Your Document</h2>
+          <h2 className="text-3xl font-bold text-gray-800">
+            Upload Your Document
+          </h2>
         </div>
       </div>
 
       <div className="border-2 border-dashed border-blue-300 rounded-xl p-6 text-center mb-6 hover:border-blue-500 transition-all">
-        <input 
-          type="file" 
-          className="hidden" 
-          id="file-upload" 
+        <input
+          type="file"
+          className="hidden"
+          id="file-upload"
           onChange={handleFileChange}
         />
-        <label 
-          htmlFor="file-upload" 
+        <label
+          htmlFor="file-upload"
           className="cursor-pointer flex flex-col items-center"
         >
           <Upload className="w-12 h-12 text-blue-600 mb-4" />
           <p className="text-gray-600">
-            {file 
-              ? `Selected: ${file.name}` 
+            {file
+              ? `Selected: ${file.name}`
               : "Drag and drop or click to upload"}
           </p>
         </label>
       </div>
 
-      <button 
+      <button
         onClick={handleButtonClick}
         className="w-full bg-gradient-to-r from-blue-600 to-blue-800 text-white py-3 rounded-full hover:opacity-90 transition-all flex items-center justify-center"
       >
