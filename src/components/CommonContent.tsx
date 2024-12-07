@@ -15,75 +15,97 @@ const CommonContent: React.FC<{ pageType: "insurance" | "health" }> = ({ pageTyp
     }
   };
 
-  const handleSubmit = async () => {
-    console.log("yaofdi");
-    if (typeof window.ethereum !== "undefined") {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-      const result = await attestData(signer, "aarav");
-      console.log(result);
-      // setResult(`Transaction hash: ${result.hash}`);
-    } else {
-      console.error("MetaMask not installed");
-    }
-    console.log("yay");
-    // if (file) {
-    //   const reader = new FileReader();
-    //   reader.onload = (e) => {
-    //     const contents = e.target?.result as string;
-    //     setFileContents(contents);
-    //     setResult(`File uploaded: ${file.name}`);
-    //   };
-    //   reader.readAsText(file);
-    // } else {
-    //   setResult("No file selected");
-    // }
-    // console.log(fileContents);
-    console.log("handleSubmit");
+  const readFileContents = (file: File) => {
+    return new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          resolve(event.target.result as string);
+        } else {
+          reject("Failed to read file");
+        }
+      };
+      reader.onerror = () => reject("Failed to read file");
+      reader.readAsText(file);
+    });
   };
-  const handleSubmitUser = async () => {
-    console.log("yaofdy");
-    if (typeof window.ethereum !== "undefined") {
-      const EASContractAddress = "0xC2679fBD37d54388Ce493F1DB75320D236e1815e"; // Sepolia v0.26
-      const provider = new ethers.providers.Web3Provider(window.ethereum);     
-      const eas = new EAS(EASContractAddress);
-      eas.connect(provider);
-      const uid = "0xbca5ca833df4281fccb9fbffe0b23303864118c216d4483909d6e79d5d8322e9";
-      const attestation = await eas.getAttestation(uid);
-      console.log(attestation);
-      const dataHex = attestation.data;
-      console.log(dataHex);
 
-      // Schema types (adjust based on your schema)
-      const schemaTypes = [
-        "string",   // e.g., some descriptive field
-        "address",  // e.g., recipient
-      ];
-
-      // Decode the data
-      const decodedData = ethers.utils.defaultAbiCoder.decode(
-        schemaTypes, // Schema field types
-        dataHex // The hex string from the API
-      );
-
-      console.log(decodedData);
-
-    } else {
-      console.error("MetaMask not installed");
+  const handleSubmit = async () => {
+    if (file) {
+      try {
+        const contents = await readFileContents(file);
+        setFileContents(contents);
+        console.log(contents);
+        // console.log("yaofdi");
+        if (typeof window.ethereum !== "undefined") {
+          const provider = new ethers.providers.Web3Provider(window.ethereum);
+          const signer = provider.getSigner();
+          const result = await attestData(signer, contents);
+          console.log(result);
+          // setResult(`Transaction hash: ${result.hash}`);
+        } else {
+          console.error("MetaMask not installed");
+        }
+        console.log("yay");
+        console.log("handleSubmit");
+      } catch (error) {
+        console.error(error);
+        return;
+      }
     }
-    console.log("yay");
-    // if (file) {
-    //   const reader = new FileReader();
-    //   reader.onload = (e) => {
-    //     const contents = e.target?.result as string;
-    //     setFileContents(contents);
-    //     setResult(`File uploaded: ${file.name}`);
-    //   };
-    //   reader.readAsText(file);
-    // } else {
-    //   setResult("No file selected");
-    // }
-    // console.log(fileContents);
+
+    
+  };
+
+  const handleSubmitUser = async () => {
+    if (file) {
+      try {
+        const contents = await readFileContents(file);
+        setFileContents(contents);
+        console.log(contents);
+
+
+        // console.log("yaofdy");
+        if (typeof window.ethereum !== "undefined") {
+          const EASContractAddress = "0xC2679fBD37d54388Ce493F1DB75320D236e1815e"; // Sepolia v0.26
+          const provider = new ethers.providers.Web3Provider(window.ethereum);     
+          const eas = new EAS(EASContractAddress);
+          eas.connect(provider);
+          const uid = "0x2238f03eb415824d725e809253f0c3928e87898cca44eb4121e4ff2815ceccb1";
+          const attestation = await eas.getAttestation(uid);
+          console.log(attestation);
+          const dataHex = attestation.data;
+          console.log(dataHex);
+
+          // Schema types (adjust based on your schema)
+          const schemaTypes = [
+            "string",   // e.g., some descriptive field
+            "address",  // e.g., recipient
+          ];
+
+          // Decode the data
+          const decodedData = ethers.utils.defaultAbiCoder.decode(
+            schemaTypes, // Schema field types
+            dataHex // The hex string from the API
+          );
+
+          console.log(decodedData[0]);
+          if (decodedData[0]===contents) {
+            console.log("Attestation is matches");
+          }
+          else{
+            console.log("Attestation doesn't match");
+          }
+
+        } else {
+          console.error("MetaMask not installed");
+        }
+        console.log("yay");
+      } catch (error) {
+        console.error(error);
+        return;
+      }
+    }
   };
 
   const handleButtonClick = () => {
