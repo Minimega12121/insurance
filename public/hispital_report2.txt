@@ -1,0 +1,33 @@
+Hospital Report
+
+Patient Name: Dabrali
+Age: 45
+Gender: Female
+Date of Admission: 2023-09-15
+Date of Discharge: 2023-09-22
+
+Diagnosis:
+- Acute Bronchitis
+
+Treatment Provided:
+- Nebulization
+- Antibiotics
+- Rest
+
+Medications Prescribed:
+- Amoxicillin 500mg
+- Ibuprofen 200mg
+
+Follow-up Instructions:
+- Follow up in 2 weeks
+- Continue medications as prescribed
+- Avoid strenuous activities
+
+Doctor's Notes:
+- Patient responded well to treatment
+- No complications observed
+
+Signature:
+Dr. John Smith
+Attending Physician
+2023-09-22
