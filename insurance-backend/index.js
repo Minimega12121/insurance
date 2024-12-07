@@ -58,6 +58,8 @@ const lit = new LitService();
     const sessionSigs = await lit.getSessionSignatures();
     console.log("Session Signatures:", sessionSigs);
 
+    
+
     // Disconnect when done
     await lit.disconnect();
   } catch (error) {

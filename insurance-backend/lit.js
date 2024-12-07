@@ -5,14 +5,14 @@ import {
   LitAccessControlConditionResource,
   createSiweMessageWithRecaps,
   generateAuthSig,
-  LitAbility
+  LitAbility,
 } from "@lit-protocol/auth-helpers";
 
 class LitService {
   litNodeClient;
   chain;
 
-  constructor(chain = "ethereum") {
+  constructor(chain = "baseSepolia") {
     this.chain = chain;
   }
 
@@ -29,30 +29,44 @@ class LitService {
   }
 
   async encryptString(message, accessControlConditions) {
-    const { ciphertext, dataToEncryptHash } = await LitJsSdk.encryptString({
-      accessControlConditions,
-      dataToEncrypt: message,
-    }, this.litNodeClient);
+    const { ciphertext, dataToEncryptHash } = await LitJsSdk.encryptString(
+      {
+        accessControlConditions,
+        dataToEncrypt: message,
+      },
+      this.litNodeClient
+    );
 
     return { ciphertext, dataToEncryptHash };
   }
 
   async decryptString(ciphertext, accessControlConditions, sessionSigs) {
-    const decrypted = await LitJsSdk.decryptToString({
-      ciphertext,
-      accessControlConditions,
-      sessionSigs,
-    }, this.litNodeClient);
+    const decrypted = await LitJsSdk.decryptToString(
+      {
+        ciphertext,
+        accessControlConditions,
+        sessionSigs,
+      },
+      this.litNodeClient
+    );
 
     return decrypted;
   }
 
   async getSessionSignatures() {
-    const provider = new ethers.providers.Web3Provider();
-    await provider.send("eth_requestAccounts", []);
-    const signer = provider.getSigner();
-    const walletAddress = await signer.getAddress();
+    const INFURA_PROJECT_URL =
+      "https://mainnet.infura.io/v3/e56cb4196c874e378dc41d4a81e697b3";
+    const PRIVATE_KEY =
+      "0xabf9989497966f655d7cb397f1e3868259c060a3a7920c20f3a563392fb9cb3b";
+    const provider = new ethers.JsonRpcProvider(INFURA_PROJECT_URL);
+    const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
+    const signer = wallet;
 
+    const walletAddress = await signer.getAddress();
+    console.log("Wallet Address:", walletAddress);
+
+    const balance = await provider.getBalance(walletAddress);
+    console.log("Wallet Balance (ETH):", ethers.formatEther(balance));
     const latestBlockhash = await this.litNodeClient.getLatestBlockhash();
 
     const authNeededCallback = async (params) => {
