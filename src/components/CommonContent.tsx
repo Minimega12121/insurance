@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import { Upload } from "lucide-react";
+import { attestData } from "@/attestations/create_schema";
+import { ethers } from 'ethers';
 
 const CommonContent: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [result, setResult] = useState<string>("");
+  const [fileContents, setFileContents] = useState<string>("");
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -11,9 +14,30 @@ const CommonContent: React.FC = () => {
     }
   };
 
-  const handleSubmit = () => {
-    // Placeholder for actual submission logic
-    setResult(`File uploaded: ${file?.name || "No file selected"}`);
+  const handleSubmit = async () => {
+    console.log("yaofdy");
+    if (typeof window.ethereum !== "undefined") {
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      const result = await attestData(signer, "fseds");
+      console.log(result);
+      // setResult(`Transaction hash: ${result.hash}`);
+    } else {
+      console.error("MetaMask not installed");
+    }
+    console.log("yay");
+    // if (file) {
+    //   const reader = new FileReader();
+    //   reader.onload = (e) => {
+    //     const contents = e.target?.result as string;
+    //     setFileContents(contents);
+    //     setResult(`File uploaded: ${file.name}`);
+    //   };
+    //   reader.readAsText(file);
+    // } else {
+    //   setResult("No file selected");
+    // }
+    // console.log(fileContents);
   };
 
   return (

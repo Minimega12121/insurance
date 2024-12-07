@@ -1,0 +1,48 @@
+Hospital Report
+===============
+
+Hospital Name: City General Hospital
+Address: 123 Main Street, Springfield, USA
+Date: October 15, 2023
+
+Patient Information
+-------------------
+Name: John Doe
+Age: 45
+Gender: Male
+Patient ID: 123456
+
+Admission Details
+-----------------
+Date of Admission: October 10, 2023
+Reason for Admission: Chest Pain
+Attending Physician: Dr. Jane Smith
+
+Medical History
+---------------
+- Hypertension
+- Type 2 Diabetes
+- Previous heart surgery (2018)
+
+Treatment Provided
+------------------
+- ECG and blood tests conducted
+- Administered medication for pain relief
+- Monitored blood pressure and blood sugar levels
+- Referred to cardiologist for further evaluation
+
+Discharge Summary
+-----------------
+Date of Discharge: October 14, 2023
+Condition at Discharge: Stable
+Follow-up Instructions: 
+- Continue prescribed medications
+- Follow up with cardiologist in 2 weeks
+- Maintain a low-sodium diet
+- Monitor blood pressure daily
+
+Signature
+---------
+Dr. Jane Smith
+Attending Physician
+City General Hospital

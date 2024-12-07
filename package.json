@@ -10,11 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@lit-protocol/constants": "^7.0.1",
-    "@lit-protocol/lit-node-client": "^7.0.1",
+    "@ethereum-attestation-service/eas-sdk": "^2.7.0",
+    "@lit-protocol/constants": "^2.2.39",
+    "@lit-protocol/lit-node-client": "^3.2.1",
     "@radix-ui/react-dialog": "^1.1.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "ethers": "^6.13.4",
     "lucide-react": "^0.468.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
