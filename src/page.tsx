@@ -16,8 +16,8 @@ const BasePage: React.FC<{
         <h1 className="text-5xl font-extrabold ml-4 text-gray-800">{title}</h1>
       </div>
       <p className="text-xl text-gray-600 mb-8">{description}</p>
+      <CommonContent pageType={page} />
     </div>
-    <CommonContent pageType={page} />
     <Dialog>
       <DialogTrigger asChild>
         <button 
