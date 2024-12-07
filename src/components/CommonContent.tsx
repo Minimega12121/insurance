@@ -18,8 +18,8 @@ const CommonContent: React.FC<{ pageType: "insurance" | "health" }> = ({ pageTyp
   const handleSubmit = async () => {
     console.log("yaofdi");
     if (typeof window.ethereum !== "undefined") {
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner();
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
       const result = await attestData(signer, "aarav");
       console.log(result);
       // setResult(`Transaction hash: ${result.hash}`);
@@ -45,7 +45,7 @@ const CommonContent: React.FC<{ pageType: "insurance" | "health" }> = ({ pageTyp
     console.log("yaofdy");
     if (typeof window.ethereum !== "undefined") {
       const EASContractAddress = "0xC2679fBD37d54388Ce493F1DB75320D236e1815e"; // Sepolia v0.26
-      const provider = new ethers.BrowserProvider(window.ethereum);     
+      const provider = new ethers.providers.Web3Provider(window.ethereum);     
       const eas = new EAS(EASContractAddress);
       eas.connect(provider);
       const uid = "0xbca5ca833df4281fccb9fbffe0b23303864118c216d4483909d6e79d5d8322e9";
@@ -61,7 +61,7 @@ const CommonContent: React.FC<{ pageType: "insurance" | "health" }> = ({ pageTyp
       ];
 
       // Decode the data
-      const decodedData = ethers.AbiCoder.defaultAbiCoder().decode(
+      const decodedData = ethers.utils.defaultAbiCoder.decode(
         schemaTypes, // Schema field types
         dataHex // The hex string from the API
       );
