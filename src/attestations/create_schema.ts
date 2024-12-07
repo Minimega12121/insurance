@@ -9,7 +9,7 @@ export const EASContractAddress = "0xC2679fBD37d54388Ce493F1DB75320D236e1815e"; 
 // // const privateKey = process.env.PRIVATE_KEY || "";
 // const privateKey = "930801543d439570fa5dd164932ce48f1df7a0bffa566344c2c11d720f5dd54a";
 
-const sample_user = "0x215a58eEF2ae37478C461ca44B9329F261484a9c".toLowerCase();
+const sample_user = "0xc6CD7CdFa6500F63e669930e30ED32BBEC9890eC".toLowerCase();
 const schemaUID = "0x779d51ae429a271b4384453f955b4620375cbc8e727b43c1f4306aab9409038f";
 
 // Attest the data
