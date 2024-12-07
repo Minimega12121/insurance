@@ -4,7 +4,7 @@ import { attestData } from "@/attestations/create_schema";
 import { ethers } from 'ethers';
 import { EAS, NO_EXPIRATION } from "@ethereum-attestation-service/eas-sdk";
 
-const CommonContent: React.FC = () => {
+const CommonContent: React.FC<{ pageType: "insurance" | "health" }> = ({ pageType }) => {
   const [file, setFile] = useState<File | null>(null);
   const [result, setResult] = useState<string>("");
   const [fileContents, setFileContents] = useState<string>("");
@@ -16,7 +16,7 @@ const CommonContent: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    console.log("yaofdy");
+    console.log("yaofdi");
     if (typeof window.ethereum !== "undefined") {
       const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
@@ -39,6 +39,7 @@ const CommonContent: React.FC = () => {
     //   setResult("No file selected");
     // }
     // console.log(fileContents);
+    console.log("handleSubmit");
   };
   const handleSubmitUser = async () => {
     console.log("yaofdy");
@@ -84,6 +85,15 @@ const CommonContent: React.FC = () => {
     // }
     // console.log(fileContents);
   };
+
+  const handleButtonClick = () => {
+    if (pageType === "insurance") {
+      handleSubmitUser();
+    } else if (pageType === "health") {
+      handleSubmit();
+    }
+  };
+
   return (
     <div className="bg-white p-8 rounded-2xl shadow-2xl border border-gray-100 ">
       <div className="flex justify-between items-center mb-6">
@@ -113,7 +123,7 @@ const CommonContent: React.FC = () => {
       </div>
 
       <button 
-        onClick={handleSubmitUser}
+        onClick={handleButtonClick}
         className="w-full bg-gradient-to-r from-blue-600 to-blue-800 text-white py-3 rounded-full hover:opacity-90 transition-all flex items-center justify-center"
       >
         <Upload className="w-6 h-6 mr-2" />

@@ -6,8 +6,9 @@ import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from 
 const BasePage: React.FC<{ 
   title: string; 
   icon: React.ReactNode; 
-  description: string 
-}> = ({ title, icon, description }) => (
+  description: string ;
+  page: "insurance" | "health";
+}> = ({ title, icon, description, page }) => (
   <div className="min-h-screen bg-blue-500 flex items-center justify-center">
     <div className="bg-white p-10 rounded-3xl shadow-2xl w-full max-w-4xl">
       <div className="flex items-center mb-8">
@@ -15,9 +16,8 @@ const BasePage: React.FC<{
         <h1 className="text-5xl font-extrabold ml-4 text-gray-800">{title}</h1>
       </div>
       <p className="text-xl text-gray-600 mb-8">{description}</p>
-      <CommonContent />
     </div>
-
+    <CommonContent pageType={page} />
     <Dialog>
       <DialogTrigger asChild>
         <button 
@@ -60,6 +60,7 @@ const InsurancePage: React.FC = () => (
     title="Insurance" 
     icon={<ShieldCheck className="w-16 h-16 text-blue-600" />}
     description="Protect what matters most with our comprehensive insurance solutions. We're here to provide you with peace of mind and financial security."
+    page="insurance"
   />
 );
 
@@ -68,6 +69,7 @@ const HealthInsurancePage: React.FC = () => (
     title="Health Insurance" 
     icon={<HeartPulse className="w-16 h-16 text-green-600" />}
     description="Your health is your wealth. Our tailored health insurance plans ensure you receive the best medical care without financial stress."
+    page= "health"
   />
 );
 
