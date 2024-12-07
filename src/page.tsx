@@ -6,10 +6,11 @@ import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from 
 const BasePage: React.FC<{ 
   title: string; 
   icon: React.ReactNode; 
-  description: string ;
+  description: string;
   page: "insurance" | "health";
 }> = ({ title, icon, description, page }) => {
   const [responseData, setResponseData] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,13 +30,13 @@ const BasePage: React.FC<{
         );
 
         if (response.ok) {
-          const data = await response.json();
-          setResponseData(data.data);
+          const data = await response.json(); // Parse the JSON response
+          setResponseData(data); // Update state with the parsed response
         } else {
-          console.error("Failed to fetch data:", response.statusText);
+          setErrorMessage(`Failed to fetch data: ${response.statusText}`);
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        setErrorMessage(`Error fetching data: ${error.message}`);
       }
     };
 
@@ -51,13 +52,22 @@ const BasePage: React.FC<{
         </div>
         <p className="text-xl text-gray-600 mb-8">{description}</p>
         <CommonContent pageType={page} />
+        
         {responseData && (
           <div className="mt-6 bg-gray-100 p-4 rounded-md shadow-md">
             <h2 className="text-lg font-semibold text-gray-800">API Response:</h2>
             <pre className="text-gray-700 mt-2">{JSON.stringify(responseData, null, 2)}</pre>
           </div>
         )}
+        
+        {errorMessage && (
+          <div className="mt-6 bg-red-100 p-4 rounded-md shadow-md">
+            <h2 className="text-lg font-semibold text-red-800">Error:</h2>
+            <p className="text-red-700 mt-2">{errorMessage}</p>
+          </div>
+        )}
       </div>
+
       <Dialog>
         <DialogTrigger asChild>
           <button 
