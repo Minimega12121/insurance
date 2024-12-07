@@ -9,6 +9,22 @@ import {
 } from "@/components/ui/dialog";
 import { WalletIcon, MessageCircleIcon, MenuIcon, XIcon } from "lucide-react";
 import ChatBox from "./ChatBox";
+import {
+  ConnectWallet,
+  Wallet,
+  WalletDropdown,
+  WalletDropdownLink,
+  WalletDropdownDisconnect,
+} from '@coinbase/onchainkit/wallet';
+import {
+  Address,
+  Avatar,
+  Badge,
+  EthBalance,
+  Name,
+  Identity,
+} from '@coinbase/onchainkit/identity';
+import { color } from "@coinbase/onchainkit/theme";
 
 declare global {
   interface Window {
@@ -21,6 +37,36 @@ export interface AccountType {
   chainId: string;
   balance: string;
 }
+
+const OnchainKitWallet = () => {
+  return (
+    <div className="flex justify-end">
+      <Wallet>
+        <ConnectWallet>
+          <Avatar className="h-6 w-6" />
+          <Name />
+        </ConnectWallet>
+        <WalletDropdown>
+          <Identity
+            className="px-4 pt-3 pb-2"
+            hasCopyAddressOnClick
+          >
+            <Avatar />
+            <Name>
+              <Badge />
+            </Name>
+            <Address className={color.foregroundMuted} />
+            <EthBalance />
+          </Identity>
+          <WalletDropdownLink icon="wallet" href="https://wallet.coinbase.com">
+            Go to Wallet Dashboard
+          </WalletDropdownLink>
+          <WalletDropdownDisconnect />
+        </WalletDropdown>
+      </Wallet>
+    </div>
+  );
+};
 
 const Navbar: React.FC = () => {
   const [isConnected, setIsConnected] = useState(false);
@@ -128,21 +174,7 @@ const Navbar: React.FC = () => {
             Health Insurance
           </Link>
           <div className="flex items-center space-x-4">
-            {isConnected && accountData ? (
-              <div className="flex items-center space-x-2">
-                <span className="text-sm">
-                  {`${accountData.address.slice(0, 6)}...${accountData.address.slice(-4)}`}
-                </span>
-              </div>
-            ) : (
-              <button
-                onClick={connectMetaMask}
-                className="flex items-center gap-2 bg-green-500 px-5 py-2 rounded-full hover:bg-green-600 transition-all shadow-md"
-              >
-                <WalletIcon className="w-5 h-5" />
-                Connect MetaMask
-              </button>
-            )}
+            <OnchainKitWallet />
             <Dialog>
               <DialogTrigger asChild>
                 <button className="flex items-center gap-2 bg-yellow-500 px-5 py-2 rounded-full hover:bg-yellow-600 transition-all shadow-md">

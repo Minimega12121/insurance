@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@coinbase/onchainkit": "^0.35.8",
     "@ethereum-attestation-service/eas-sdk": "^2.7.0",
     "@lit-protocol/auth-helpers": "^6.11.1",
     "@lit-protocol/constants": "^6.11.1",
