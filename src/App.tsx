@@ -602,7 +602,7 @@ function App() {
       {
         contractAddress: "",
         standardContractType: "",
-        chain: "ethereum",
+        chain: "baseSepolia",
         method: "",
         parameters: [":userAddress"],
         returnValueTest: {
@@ -638,7 +638,7 @@ function App() {
       {
         contractAddress: "",
         standardContractType: "",
-        chain: "ethereum",
+        chain: "baseSepolia",
         method: "",
         parameters: [":userAddress"],
         returnValueTest: {
@@ -736,7 +736,7 @@ function App() {
       const decryptedString = await decryptToString(
         {
           accessControlConditions,
-          chain: "ethereum",
+          chain: "baseSepolia",
           ciphertext: _ciphertext,
           dataToEncryptHash: _metadata,
           sessionSigs,
@@ -828,8 +828,7 @@ function App() {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                input:
-                  "Patricia experienced a severe allergic reaction and went to an emergency room for treatment. The treatment was deemed medically necessary by the attending physician. No coverage limits have been exceeded. Cost of Treatment: 0.002 Wallet: 0xfcd1e86925C9c066d31AacC78c9e7De32b4574Ae",
+                input: "Patricia experienced a severe allergic reaction and went to an emergency room for treatment. The treatment was deemed medically necessary by the attending physician. No coverage limits have been exceeded. Cost of Treatment: 0.002 Wallet: 0xfcd1e86925C9c066d31AacC78c9e7De32b4574Ae",
                 conversation_id: 0,
               }),
             }
@@ -838,7 +837,7 @@ function App() {
             throw new Error("Network response was not ok");
           }
           const data = await response.json(); // assuming the API returns JSON
-          console.log(data.data);
+          console.log(data);
         } catch (error) {
           console.error("Error fetching data: ", error); // Handle any errors
         }
