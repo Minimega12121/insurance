@@ -25,6 +25,7 @@ import {
 import { LIT_NETWORK } from "@lit-protocol/constants";
 // import { LitContracts } from "@lit-protocol/contracts-sdk";
 import * as ethers from "ethers";
+import provider  from "./ethers";
 import {
   LitAbility,
   LitAccessControlConditionResource,
@@ -60,11 +61,16 @@ function App() {
   };
 
   const encrypt = async () => {
-    const wallet = new ethers.Wallet(
-      "842d48f8f29f383f5f1abcc2572d83e658ad526a360de8d688e0768342fc621c"
-    );
 
-    console.log(await wallet.getAddress());
+    const signer = provider?.getSigner();
+    const account = await signer?.getAddress();
+
+    // const wallet = new ethers.Wallet(
+    //   "842d48f8f29f383f5f1abcc2572d83e658ad526a360de8d688e0768342fc621c"
+    // );
+
+   // console.log(await wallet.getAddress());
+    console.log(account);
 
     const accessControlConditions = [
       {
@@ -116,11 +122,14 @@ function App() {
       },
     ];
 
-    const wallet = new ethers.Wallet(
-      "842d48f8f29f383f5f1abcc2572d83e658ad526a360de8d688e0768342fc621c"
-    );
+    // const wallet = new ethers.Wallet(
+    //   "842d48f8f29f383f5f1abcc2572d83e658ad526a360de8d688e0768342fc621c"
+    // );
 
-    console.log(await wallet.getAddress());
+    // console.log(await wallet.getAddress());
+
+    const signer = provider?.getSigner();
+    const account= await signer?.getAddress();
 
     // Capacity credits
 
@@ -170,14 +179,14 @@ function App() {
           uri: params.uri,
           expiration: params.expiration,
           resources: params.resourceAbilityRequests,
-          walletAddress: await wallet.getAddress(),
+          walletAddress: account || "",
           nonce: latestBlockHash,
           litNodeClient: litNodeClient,
         });
 
         // Generate the authSig
         const authSig = await generateAuthSig({
-          signer: wallet,
+          signer: signer as ethers.Signer ,
           toSign,
         });
 
@@ -216,11 +225,13 @@ function App() {
   };
 
   const litAction = async () => {
-    const wallet = new ethers.Wallet(
-      "842d48f8f29f383f5f1abcc2572d83e658ad526a360de8d688e0768342fc621c"
-    );
+    // const wallet = new ethers.Wallet(
+    //   "842d48f8f29f383f5f1abcc2572d83e658ad526a360de8d688e0768342fc621c"
+    // );
 
-    console.log(await wallet.getAddress());
+    // console.log(await wallet.getAddress());
+    const signer = provider?.getSigner();
+    const account= await signer?.getAddress();
 
     if (litNodeClient) {
       // const { capacityDelegationAuthSig } =
@@ -253,14 +264,14 @@ function App() {
           uri: params.uri,
           expiration: params.expiration,
           resources: params.resourceAbilityRequests,
-          walletAddress: await wallet.getAddress(),
+          walletAddress: account || "",
           nonce: latestBlockHash,
           litNodeClient: litNodeClient,
         });
 
         // Generate the authSig
         const authSig = await generateAuthSig({
-          signer: wallet,
+          signer: signer as ethers.Signer,
           toSign,
         });
 
