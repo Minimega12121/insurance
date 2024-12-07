@@ -1,0 +1,24 @@
+{
+  "name": "insurance-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@lit-protocol/auth-helpers": "^6.11.1",
+    "@lit-protocol/constants": "^6.11.1",
+    "@lit-protocol/lit-node-client": "^6.11.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "ether": "^0.0.9",
+    "express": "^4.21.2",
+    "nodemon": "^3.1.7"
+  }
+}
