@@ -32,6 +32,7 @@ import {
   generateAuthSig,
   LitActionResource,
 } from "@lit-protocol/auth-helpers";
+import { attestData } from "@/attestations/tmp";
 
 function App() {
   const [litNodeClient, setLitNodeClient] = useState<LitNodeClient | null>(
@@ -311,6 +312,29 @@ function App() {
       });
 
       console.log(_response);
+      const logs = _response["logs"];
+
+    // Extract CLAIM and its value
+    const claimMatch = logs.match(/CLAIM:\s*(.*)/);
+    if (claimMatch) {
+      const claimValue = claimMatch[1].trim();
+      console.log(claimValue);
+      // console.log("CLAIM:", claimValue);
+      ///////////////////////////////////////////////////////
+      const result = await attestData(claimValue);
+      console.log(result);
+      if (claimValue==="ACCEPTED") {
+        console.log("CLAIM is ACCEPTED");
+      }
+      else if (claimValue==="NOT ACCEPTED") {
+        console.log("CLAIM is REJECTED");
+      }
+      else {
+        console.log("CLAIM is neither ACCEPTED nor REJECTED");
+      }
+    } else {
+      console.log("CLAIM not found in logs");
+    }
     }
   };
 
