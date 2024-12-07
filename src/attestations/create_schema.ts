@@ -45,29 +45,4 @@ export async function attestData(signer: ethers.Signer, hosptial_data: string) {
 
   console.log("New attestation UID:", newAttestationUID);
   return newAttestationUID;
-  // // const signer = new ethers.Wallet(privateKey, provider);
-
-  // // const eas = new EAS(EASContractAddress);
-
-  // // const schemaEncoder = new SchemaEncoder("string hosptial, address user");
-
-  // // const encodedData = schemaEncoder.encodeData([
-  // //   { name: "hosptial", value: hosptial_data, type: "string" },
-  // //   { name: "user", value: sample_user, type: "address" },
-  // // ]);
-
-  // // eas.connect(signer);  
-  // // const tx = await eas.attest({
-  // //   schema: schemaUID,
-  // //   data: {
-  // //     recipient: sample_user,   
-  // //     revocable: false,
-  // //     data: encodedData,
-  // //   },
-  // // });
-
-  // // const newAttestationUID = await tx.wait();
-
-  // // console.log("New attestation UID:", newAttestationUID);
-  // // return newAttestationUID;
 }

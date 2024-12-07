@@ -3,6 +3,7 @@ import { Upload } from "lucide-react";
 import { attestData } from "@/attestations/create_schema";
 import { ethers } from 'ethers';
 import { EAS, NO_EXPIRATION } from "@ethereum-attestation-service/eas-sdk";
+import { GraphQLClient, gql } from 'graphql-request';
 
 const CommonContent: React.FC<{ pageType: "insurance" | "health" }> = ({ pageType }) => {
   const [file, setFile] = useState<File | null>(null);
@@ -63,43 +64,67 @@ const CommonContent: React.FC<{ pageType: "insurance" | "health" }> = ({ pageTyp
         const contents = await readFileContents(file);
         setFileContents(contents);
         console.log(contents);
+        const client = new GraphQLClient('https://sepolia.easscan.org/graphql');
 
-
-        // console.log("yaofdy");
-        if (typeof window.ethereum !== "undefined") {
-          const EASContractAddress = "0xC2679fBD37d54388Ce493F1DB75320D236e1815e"; // Sepolia v0.26
-          const provider = new ethers.providers.Web3Provider(window.ethereum);     
-          const eas = new EAS(EASContractAddress);
-          eas.connect(provider);
-          const uid = "0x2238f03eb415824d725e809253f0c3928e87898cca44eb4121e4ff2815ceccb1";
-          const attestation = await eas.getAttestation(uid);
-          console.log(attestation);
-          const dataHex = attestation.data;
-          console.log(dataHex);
-
-          // Schema types (adjust based on your schema)
-          const schemaTypes = [
-            "string",   // e.g., some descriptive field
-            "address",  // e.g., recipient
-          ];
-
-          // Decode the data
-          const decodedData = ethers.utils.defaultAbiCoder.decode(
-            schemaTypes, // Schema field types
-            dataHex // The hex string from the API
-          );
-
-          console.log(decodedData[0]);
-          if (decodedData[0]===contents) {
-            console.log("Attestation is matches");
+        const query = gql`
+          query Attestation($id: String!) {
+            attestation(where: { id: $id }) {
+              id
+              attester
+              recipient
+              refUID
+              revocable
+              revocationTime
+              expirationTime
+              data
+            }
           }
-          else{
-            console.log("Attestation doesn't match");
-          }
+        `;
 
-        } else {
-          console.error("MetaMask not installed");
-        }
+        const variables = {
+          id: "0x2238f03eb415824d725e809253f0c3928e87898cca44eb4121e4ff2815ceccb1",
+        };
+
+        console.log("Sending GraphQL request with variables:", variables);
+        const response = await client.request(query, variables);
+        console.log("GraphQL response:", response);
+
+
+        // // console.log("yaofdy");
+        // if (typeof window.ethereum !== "undefined") {
+        //   const EASContractAddress = "0xC2679fBD37d54388Ce493F1DB75320D236e1815e"; // Sepolia v0.26
+        //   const provider = new ethers.providers.Web3Provider(window.ethereum);     
+        //   const eas = new EAS(EASContractAddress);
+        //   eas.connect(provider);
+        //   const uid = "0x2238f03eb415824d725e809253f0c3928e87898cca44eb4121e4ff2815ceccb1";
+        //   const attestation = await eas.getAttestation(uid);
+        //   console.log(attestation);
+        //   const dataHex = attestation.data;
+        //   console.log(dataHex);
+
+        //   // Schema types (adjust based on your schema)
+        //   const schemaTypes = [
+        //     "string",   // e.g., some descriptive field
+        //     "address",  // e.g., recipient
+        //   ];
+
+        //   // Decode the data
+        //   const decodedData = ethers.utils.defaultAbiCoder.decode(
+        //     schemaTypes, // Schema field types
+        //     dataHex // The hex string from the API
+        //   );
+
+        //   console.log(decodedData[0]);
+        //   if (decodedData[0]===contents) {
+        //     console.log("Attestation matches");
+        //   }
+        //   else{
+        //     console.log("Attestation doesn't match");
+        //   }
+
+        // } else {
+        //   console.error("MetaMask not installed");
+        // }
         console.log("yay");
       } catch (error) {
         console.error(error);
