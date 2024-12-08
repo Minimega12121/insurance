@@ -37,14 +37,89 @@ const CommonContent: React.FC<{ pageType: "insurance" | "health" }> = ({
     }
   };
 
-  const simulateAiAnalysis = () => {
-    return new Promise<string>((resolve) => {
-      setTimeout(() => {
-        resolve(
-          "AI has successfully analyzed and confirmed the authenticity of your document."
-        );
-      }, 3000);
-    });
+    const simulateAiAnalysis = async (contents: string): Promise<string> => {
+
+    const signer = provider?.getSigner();
+    const account = await signer?.getAddress();
+
+    if (litNodeClient) {
+      const latestBlockHash = await litNodeClient.getLatestBlockhash();
+
+      const authNeededCallback = async (params: {
+        uri?: any;
+        expiration?: any;
+        resourceAbilityRequests?: any;
+      }) => {
+        // Create the SIWE message
+        const toSign = await createSiweMessageWithRecaps({
+          uri: params.uri,
+          expiration: params.expiration,
+          resources: params.resourceAbilityRequests,
+          walletAddress: account || "",
+          nonce: latestBlockHash,
+          litNodeClient: litNodeClient,
+        });
+
+        // Generate the authSig
+        const authSig = await generateAuthSig({
+          signer: signer as ethers.Signer,
+          toSign,
+        });
+
+        return authSig;
+      };
+
+      const sessionSigs = await litNodeClient.getSessionSigs({
+        chain: "baseSepolia",
+        expiration: new Date(Date.now() + 1000 * 60 * 10).toISOString(),
+        resourceAbilityRequests: [
+          {
+            resource: new LitActionResource("*"),
+            ability: LitAbility.LitActionExecution,
+          },
+        ],
+        authNeededCallback,
+      });
+
+
+      const _litActionCode = async () => {
+        try {
+            const prompt = STRICTLY GIVE THE SUMMARY OF THE MEDICAL REPORT EXCLUDING UNNECESSARY STUFF IN CONTEXT OF INSURANCE CLAIM: ${contents};
+            const response = await fetch(
+              "https://onchain-agent-demo-backend-architdabral123.replit.app/api/chat",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  input: prompt,
+                  conversation_id: 0,
+                }),
+              }
+            );
+
+            if (!response.ok) {
+              throw new Error("Network response was not ok: ${response.statusText}");
+            }
+
+            const data = await response.json(); // Assuming the API returns JSON
+            console.log(data);
+          } catch (error) {
+            console.error("Error in simulateAiAnalysis:", error);
+          }
+        };
+
+        const litActionCode = `(${_litActionCode.toString()})();`;
+
+        const _response = await litNodeClient.executeJs({
+          sessionSigs: sessionSigs,
+          code: litActionCode,
+          jsParams: {contents},
+        });
+
+        return _response["logs"];
+    
   };
   const encrypt = async () => {
     const signer = provider?.getSigner();
