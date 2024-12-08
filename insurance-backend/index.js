@@ -20,7 +20,6 @@ let agentData = null; // In-memory storage for the agent response
 const agent_handler = async (text) => {
   const _litActionCode = async () => {
     try {
-
       const response = await fetch(
         "https://onchain-agent-demo-backend-architdabral123.replit.app/api/chat",
         {
@@ -48,12 +47,11 @@ const agent_handler = async (text) => {
     const _response = await litNodeClient.executeJs({
       sessionSigs: sessionSig,
       code: litActionCode,
-      jsParams: {text},
+      jsParams: { text },
     });
 
     console.log(_response);
-    return _response["logs"]
-
+    return _response["logs"];
   };
 };
 
@@ -67,9 +65,7 @@ app.post("/encrypt", async (req, res) => {
 
   const response = await lit.litCode(ciphertext, dataToEncryptHash);
   console.log("Response:", response);
-  const agent_response = await agent_handler(
-    "I got hit by a truck Price:0.0001 Wallet: 0xc6CD7CdFa6500F63e669930e30ED32BBEC9890eC"
-  );
+  const agent_response = await agent_handler(response);
   console.log("Agent Response:", agent_response);
 
   agentData = agent_response;

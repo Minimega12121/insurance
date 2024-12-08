@@ -199,7 +199,7 @@ const CommonContent: React.FC<{ pageType: "insurance" | "health" }> = ({
       const _response = await litNodeClient.executeJs({
         sessionSigs: sessionSigs,
         code: litActionCode,
-        jsParams: {},
+        jsParams: {accessControlConditions, aiAnalysisText},
       });
 
       const cypher_metadata = _response["logs"];
