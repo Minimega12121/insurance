@@ -29,54 +29,54 @@ class LitService {
     }
   }
 
-  async encryptString(message, accessControlConditions) {
-    const { ciphertext, dataToEncryptHash } = await LitJsSdk.encryptString(
-      {
-        accessControlConditions,
-        dataToEncrypt: message,
-      },
-      this.litNodeClient
-    );
+  // async encryptString(message, accessControlConditions) {
+  //   const { ciphertext, dataToEncryptHash } = await LitJsSdk.encryptString(
+  //     {
+  //       accessControlConditions,
+  //       dataToEncrypt: message,
+  //     },
+  //     this.litNodeClient
+  //   );
 
-    return { ciphertext, dataToEncryptHash };
-  }
+  //   return { ciphertext, dataToEncryptHash };
+  // }
 
-  async decryptString(ciphertext, dataToEncryptHash) {
-    try {
-      const sessionSigs = await this.getSessionSignatures();
-      const accessControlConditions = [
-        {
-          contractAddress: "",
-          standardContractType: "",
-          chain: "baseSepolia",
-          method: "",
-          parameters: [":userAddress"],
-          returnValueTest: {
-            comparator: "=",
-            value: "0xc6CD7CdFa6500F63e669930e30ED32BBEC9890eC",
-          },
-        },
-      ];
+  // async decryptString(ciphertext, dataToEncryptHash) {
+  //   try {
+  //     const sessionSigs = await this.getSessionSignatures();
+  //     const accessControlConditions = [
+  //       {
+  //         contractAddress: "",
+  //         standardContractType: "",
+  //         chain: "baseSepolia",
+  //         method: "",
+  //         parameters: [":userAddress"],
+  //         returnValueTest: {
+  //           comparator: "=",
+  //           value: "0xc6CD7CdFa6500F63e669930e30ED32BBEC9890eC",
+  //         },
+  //       },
+  //     ];
 
-      console.log("Session Sigs:", sessionSigs);
-      console.log("ioafioahfjpoas");
-      const decrypted = await LitJsSdk.decryptToString(
-        {
-          ciphertext: ciphertext,
-          dataToEncryptHash: dataToEncryptHash,
-          accessControlConditions: accessControlConditions,
-          sessionSignatures: sessionSigs,
-          chain: this.chain,
-        },
-        this.litNodeClient
-      );
+  //     console.log("Session Sigs:", sessionSigs);
+  //     console.log("ioafioahfjpoas");
+  //     const decrypted = await LitJsSdk.decryptToString(
+  //       {
+  //         ciphertext: ciphertext,
+  //         dataToEncryptHash: dataToEncryptHash,
+  //         accessControlConditions: accessControlConditions,
+  //         sessionSignatures: sessionSigs,
+  //         chain: this.chain,
+  //       },
+  //       this.litNodeClient
+  //     );
 
-      return decrypted;
-    } catch (error) {
-      console.error("An error occurred during decryption:", error);
-      throw error; // Re-throw the error if you want it to propagate
-    }
-  }
+  //     return decrypted;
+  //   } catch (error) {
+  //     console.error("An error occurred during decryption:", error);
+  //     throw error; // Re-throw the error if you want it to propagate
+  //   }
+  // }
 
   // async transferNativeToken(to, amount) {
   //   try {
@@ -189,22 +189,6 @@ class LitService {
   }
 
   async litCode(ciphertext, dataToEncryptHash) {
-    // const litActionCode = `(async () => {
-    //     try {
-    //       const resp = await Lit.Actions.decryptAndCombine({
-    //         accessControlConditions,
-    //         ciphertext,
-    //         dataToEncryptHash,
-    //         authSig: null,
-    //         chain: "baseSepolia",
-    //       });
-
-    //       console.log(resp);
-    //     } catch (error) {
-    //       console.error(error);
-    //     }
-    //   })();`;
-
     const litActionCode = `(async () => {
       try {
         const resp = await Lit.Actions.decryptAndCombine({
@@ -246,6 +230,8 @@ class LitService {
       },
     });
     console.log("Lit Action Results:", results);
+
+    return results["logs"];
   }
 }
 

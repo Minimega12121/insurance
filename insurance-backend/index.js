@@ -18,24 +18,43 @@ let agentData = null; // In-memory storage for the agent response
 
 // Function to handle communication with the external API
 const agent_handler = async (text) => {
-  const response = await fetch(
-    "https://onchain-agent-demo-backend-architdabral123.replit.app/api/chat",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        input: text,
-        conversation_id: 0,
-      }),
+  const _litActionCode = async () => {
+    try {
+
+      const response = await fetch(
+        "https://onchain-agent-demo-backend-architdabral123.replit.app/api/chat",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            input: text,
+            conversation_id: 0,
+          }),
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error(error);
     }
-  );
-  if (!response.ok) {
-    throw new Error("Network response was not ok");
-  }
-  const data = await response.json(); // assuming the API returns JSON
-  return data;
+
+    const litActionCode = `(${_litActionCode.toString()})();`;
+
+    const _response = await litNodeClient.executeJs({
+      sessionSigs: sessionSig,
+      code: litActionCode,
+      jsParams: {text},
+    });
+
+    console.log(_response);
+    return _response["logs"]
+
+  };
 };
 
 // Encrypt endpoint (unchanged)
@@ -48,7 +67,9 @@ app.post("/encrypt", async (req, res) => {
 
   const response = await lit.litCode(ciphertext, dataToEncryptHash);
   console.log("Response:", response);
-  const agent_response = await agent_handler("I got hit by a truck Price:0.0001 Wallet: 0xc6CD7CdFa6500F63e669930e30ED32BBEC9890eC");
+  const agent_response = await agent_handler(
+    "I got hit by a truck Price:0.0001 Wallet: 0xc6CD7CdFa6500F63e669930e30ED32BBEC9890eC"
+  );
   console.log("Agent Response:", agent_response);
 
   agentData = agent_response;
@@ -72,6 +93,7 @@ app.listen(PORT, () => {
 
 const lit = new LitService();
 await lit.connect();
+const sessionSig = await lit.getSessionSignatures();
 
 // (async () => {
 //   try {

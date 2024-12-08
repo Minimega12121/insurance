@@ -1,17 +1,17 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import { InsurancePage, HealthInsurancePage } from "./page";
-const App: React.FC = () => (
-  <Router>
-    <div className="min-h-screen bg-gray-100">
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<InsurancePage />} />
-        <Route path="/health" element={<HealthInsurancePage />} />
-      </Routes>
-    </div>
-  </Router>
-);
+// import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+// import Navbar from "./components/Navbar";
+// import { InsurancePage, HealthInsurancePage } from "./page";
+// const App: React.FC = () => (
+//   <Router>
+//     <div className="min-h-screen bg-gray-100">
+//       <Navbar />
+//       <Routes>
+//         <Route path="/" element={<InsurancePage />} />
+//         <Route path="/health" element={<HealthInsurancePage />} />
+//       </Routes>
+//     </div>
+//   </Router>
+// );
 
 export default App;
 

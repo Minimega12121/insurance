@@ -47,34 +47,94 @@ const CommonContent: React.FC<{ pageType: "insurance" | "health" }> = ({
     });
   };
   const encrypt = async () => {
-    const accessControlConditions = [
-      {
-        contractAddress: "",
-        standardContractType: "",
-        chain: "baseSepolia",
-        method: "",
-        parameters: [":userAddress"],
-        returnValueTest: {
-          comparator: "=",
-          value: "0xc6CD7CdFa6500F63e669930e30ED32BBEC9890eC`",
-        },
-      },
-    ];
+    const signer = provider?.getSigner();
+    const account = await signer?.getAddress();
 
     if (litNodeClient) {
-      const { ciphertext, dataToEncryptHash } = await encryptString(
+      const latestBlockHash = await litNodeClient.getLatestBlockhash();
+
+      const authNeededCallback = async (params: {
+        uri?: any;
+        expiration?: any;
+        resourceAbilityRequests?: any;
+      }) => {
+        // Create the SIWE message
+        const toSign = await createSiweMessageWithRecaps({
+          uri: params.uri,
+          expiration: params.expiration,
+          resources: params.resourceAbilityRequests,
+          walletAddress: account || "",
+          nonce: latestBlockHash,
+          litNodeClient: litNodeClient,
+        });
+
+        // Generate the authSig
+        const authSig = await generateAuthSig({
+          signer: signer as ethers.Signer,
+          toSign,
+        });
+
+        return authSig;
+      };
+
+      const sessionSigs = await litNodeClient.getSessionSigs({
+        chain: "baseSepolia",
+        expiration: new Date(Date.now() + 1000 * 60 * 10).toISOString(),
+        resourceAbilityRequests: [
+          {
+            resource: new LitActionResource("*"),
+            ability: LitAbility.LitActionExecution,
+          },
+        ],
+        authNeededCallback,
+      });
+
+      const _litActionCode = async () => {
+        try {
+          const encoder = new TextEncoder();
+          const encodedMessage = encoder.encode(aiAnalysisText);
+
+          const { ciphertext, dataToEncryptHash } = await Lit.Actions.encrypt({
+            accessControlConditions,
+            to_encrypt: encodedMessage,
+          });
+
+          console.log(ciphertext, dataToEncryptHash);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+      const accessControlConditions = [
         {
-          accessControlConditions,
-          dataToEncrypt: aiAnalysisText,
+          contractAddress: "",
+          standardContractType: "",
+          chain: "baseSepolia",
+          method: "",
+          parameters: [":userAddress"],
+          returnValueTest: {
+            comparator: "=",
+            value: "0xc6CD7CdFa6500F63e669930e30ED32BBEC9890eC`",
+          },
         },
-        litNodeClient
-      );
+      ];
 
-      setciphertext(ciphertext);
-      setmetadata(dataToEncryptHash);
+      const litActionCode = `(${_litActionCode.toString()})();`;
 
-      console.log(ciphertext);
-      console.log(dataToEncryptHash);
+      const _response = await litNodeClient.executeJs({
+        sessionSigs: sessionSigs,
+        code: litActionCode,
+        jsParams: {},
+      });
+
+      const cypher_metadata = _response["logs"];
+      const { cypher, metadata } = cypher_metadata.split(" ", 2);
+
+      setciphertext(cypher);
+      setmetadata(metadata);
+
+      console.log(cypher);
+      console.log(metadata);
     } else {
       console.error("LitNodeClient is not connected or initialized.");
     }
