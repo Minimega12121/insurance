@@ -11,7 +11,11 @@ import {
   generateAuthSig,
   LitActionResource,
 } from "@lit-protocol/auth-helpers";
-import { LitNodeClient } from "@lit-protocol/lit-node-client";
+import {
+  LitNodeClient,
+  decryptToString,
+  encryptString,
+} from "@lit-protocol/lit-node-client";
 
 const CommonContent: React.FC<{ pageType: "insurance" | "health" }> = ({
   pageType,
@@ -24,6 +28,9 @@ const CommonContent: React.FC<{ pageType: "insurance" | "health" }> = ({
   );
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [aiAnalysisText, setAiAnalysisText] = useState<string>("");
+  const [_ciphertext, setciphertext] = useState<string>("");
+  const [_metadata, setmetadata] = useState<string>("");
+  // const [aiAgentData, setAiAgentData] = useState<any>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -39,6 +46,39 @@ const CommonContent: React.FC<{ pageType: "insurance" | "health" }> = ({
         );
       }, 3000);
     });
+  };
+  const encrypt = async () => {
+    const accessControlConditions = [
+      {
+        contractAddress: "",
+        standardContractType: "",
+        chain: "baseSepolia",
+        method: "",
+        parameters: [":userAddress"],
+        returnValueTest: {
+          comparator: "=",
+          value: "0xc6CD7CdFa6500F63e669930e30ED32BBEC9890eC`",
+        },
+      },
+    ];
+
+    if (litNodeClient) {
+      const { ciphertext, dataToEncryptHash } = await encryptString(
+        {
+          accessControlConditions,
+          dataToEncrypt: aiAnalysisText,
+        },
+        litNodeClient
+      );
+
+      setciphertext(ciphertext);
+      setmetadata(dataToEncryptHash);
+
+      console.log(ciphertext);
+      console.log(dataToEncryptHash);
+    } else {
+      console.error("LitNodeClient is not connected or initialized.");
+    }
   };
 
   useEffect(() => {
@@ -129,6 +169,50 @@ const CommonContent: React.FC<{ pageType: "insurance" | "health" }> = ({
   //   giveData();
   // });
 
+  // const aiAgent = async () => {
+  //   try {
+  //     const response = await fetch("http://localhost:5000/agent-data", {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+  //     if (!response.ok) {
+  //       throw new Error("Request failed with status " + response.status);
+  //     }
+  //     const data = await response.json();
+  //     return data;
+  //   } catch (error) {
+  //     return error;
+  //   }
+  // };
+
+  const handleServerSend = async () => {
+    await encrypt();
+    try {
+      const response = await fetch("http://localhost:5000/encrypt", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ciphertext: _ciphertext,
+          dataToEncryptHash: _metadata,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error("Request failed with status " + response.status);
+      }
+
+      const data = await response.json();
+      console.log("Response:", data);
+      // const aiAgentData = await aiAgent();
+      // setAiAgentData(aiAgentData);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleSubmitUser = async () => {
     if (file) {
       try {
@@ -200,7 +284,6 @@ const CommonContent: React.FC<{ pageType: "insurance" | "health" }> = ({
         // }
         console.log("yay");
         await litAction();
-        setResult("Attested data");
         setIsProcessing(false);
         setFile(null);
         console.log("run");
@@ -321,27 +404,26 @@ const CommonContent: React.FC<{ pageType: "insurance" | "health" }> = ({
       console.log(_response);
       const logs = _response["logs"];
       console.log(logs);
-      // const dataHex = ethers.utils.hexlify(
-      //   ethers.utils.toUtf8Bytes(JSON.stringify(logs))
-      // );
-      // const schemaTypes = [
-      //   "string",   // e.g., some descriptive field
-      //   "address"
-      // ];
+      const dataHex = logs.trim();
+      const schemaTypes = [
+        "string", // e.g., some descriptive field
+        "address",
+      ];
 
-      // // Decode the data
-      // const decodedData = ethers.utils.defaultAbiCoder.decode(
-      //   schemaTypes, // Schema field types
-      //   dataHex // The hex string from the API
-      // );
+      // Decode the data
+      const decodedData = ethers.utils.defaultAbiCoder.decode(
+        schemaTypes, // Schema field types
+        dataHex // The hex string from the API
+      );
 
-      // console.log(decodedData[0]);
-      // if (decodedData[0]==fileContents) {
-      //   console.log("Attestation matches");
-      // }
-      // else{
-      //   console.log("Attestation doesn't match");
-      // }
+      console.log(decodedData[0]);
+      if (decodedData[0].trim() == fileContents.trim()) {
+        console.log("Attestation matches");
+        setResult("Attestation matches");
+      } else {
+        console.log("Attestation doesn't match");
+        setResult("Attestation doesn't match");
+      }
     }
   };
 
@@ -413,23 +495,23 @@ const CommonContent: React.FC<{ pageType: "insurance" | "health" }> = ({
                     : "bg-red-50 border-l-4 border-red-500"
                 }`}
               >
-                {result === "Attested data" ? (
+                {result === "Attestation matches" ? (
                   <CheckCircle className="w-8 h-8 text-green-600 flex-shrink-0" />
                 ) : (
                   <XCircle className="w-8 h-8 text-red-600 flex-shrink-0" />
                 )}
                 <div>
                   <h3 className="text-xl font-semibold mb-2">
-                    {result === "Attested data"
+                    {result === "Attestation matches"
                       ? "Verification Successful"
                       : "Verification Failed"}
                   </h3>
                   <p className="text-gray-700">
-                    {result === "Attested data"
+                    {result === "Attestation matches"
                       ? "Your document has been successfully verified and authenticated."
                       : "Document verification encountered an issue."}
                   </p>
-                  {result === "Attested data" && (
+                  {result === "Attestation matches" && (
                     <div className="mt-3 space-y-1 text-green-700">
                       <div className="flex items-center space-x-2">
                         <CheckCircle className="w-4 h-4" />
@@ -445,8 +527,7 @@ const CommonContent: React.FC<{ pageType: "insurance" | "health" }> = ({
               </div>
             </div>
           )}
-
-          {aiAnalysisText && (
+          {result === "Attestation matches" && (
             <div className="bg-blue-50 border-l-4 border-blue-500 p-5 rounded-2xl space-y-3">
               <div className="flex items-center space-x-3">
                 <svg
@@ -468,25 +549,40 @@ const CommonContent: React.FC<{ pageType: "insurance" | "health" }> = ({
                 </h3>
               </div>
               <p className="text-gray-700 break-words">{aiAnalysisText}</p>
-              <button className="w-full bg-gradient-to-r from-green-500 to-blue-500 text-white py-3 rounded-lg shadow-lg hover:opacity-90 transition-all flex items-center justify-center">
+              <button
+                className="w-full bg-gradient-to-r from-green-500 to-blue-500 text-white py-3 rounded-lg shadow-lg hover:opacity-90 transition-all flex items-center justify-center"
+                onClick={handleServerSend}
+              >
                 <span className="mr-2">Send To Server</span>
+              </button>
+            </div>
+          )}
+          {/* {aiAgentData && (
+            <div className="bg-green-50 border-l-4 border-green-500 p-5 rounded-2xl space-y-3">
+              <div className="flex items-center space-x-3">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 text-white"
+                  className="h-6 w-6 text-green-600"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
                 >
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M15 12H3m0 0l4-4m-4 4l4 4m9-4h6m0 0l-4 4m4-4l-4-4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
                   />
                 </svg>
-              </button>
+                <h3 className="text-xl font-semibold text-gray-800">
+                  AI Agent Data
+                </h3>
+              </div>
+              <div className="text-gray-700">
+                <h5>{aiAgentData}</h5>
+              </div>
             </div>
-          )}
+          )} */}
         </div>
       )}
     </div>

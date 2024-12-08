@@ -41,17 +41,41 @@ class LitService {
     return { ciphertext, dataToEncryptHash };
   }
 
-  async decryptString(ciphertext, accessControlConditions, sessionSigs) {
-    const decrypted = await LitJsSdk.decryptToString(
-      {
-        ciphertext,
-        accessControlConditions,
-        sessionSigs,
-      },
-      this.litNodeClient
-    );
+  async decryptString(ciphertext, dataToEncryptHash) {
+    try {
+      const sessionSigs = await this.getSessionSignatures();
+      const accessControlConditions = [
+        {
+          contractAddress: "",
+          standardContractType: "",
+          chain: "baseSepolia",
+          method: "",
+          parameters: [":userAddress"],
+          returnValueTest: {
+            comparator: "=",
+            value: "0xc6CD7CdFa6500F63e669930e30ED32BBEC9890eC",
+          },
+        },
+      ];
 
-    return decrypted;
+      console.log("Session Sigs:", sessionSigs);
+      console.log("ioafioahfjpoas");
+      const decrypted = await LitJsSdk.decryptToString(
+        {
+          ciphertext: ciphertext,
+          dataToEncryptHash: dataToEncryptHash,
+          accessControlConditions: accessControlConditions,
+          sessionSignatures: sessionSigs,
+          chain: this.chain,
+        },
+        this.litNodeClient
+      );
+
+      return decrypted;
+    } catch (error) {
+      console.error("An error occurred during decryption:", error);
+      throw error; // Re-throw the error if you want it to propagate
+    }
   }
 
   // async transferNativeToken(to, amount) {
@@ -133,7 +157,25 @@ class LitService {
           ability: LitAbility.LitActionExecution,
         },
       ],
-      authNeededCallback,
+      authNeededCallback: async ({
+        uri,
+        expiration,
+        resourceAbilityRequests,
+      }) => {
+        const toSign = await createSiweMessageWithRecaps({
+          uri,
+          expiration,
+          resources: resourceAbilityRequests,
+          walletAddress: await signer.getAddress(),
+          nonce: await this.litNodeClient.getLatestBlockhash(),
+          litNodeClient: this.litNodeClient,
+        });
+
+        return await generateAuthSig({
+          signer,
+          toSign,
+        });
+      },
     });
 
     return sessionSigs;
@@ -146,14 +188,62 @@ class LitService {
     }
   }
 
-  async litCode() {
+  async litCode(ciphertext, dataToEncryptHash) {
+    // const litActionCode = `(async () => {
+    //     try {
+    //       const resp = await Lit.Actions.decryptAndCombine({
+    //         accessControlConditions,
+    //         ciphertext,
+    //         dataToEncryptHash,
+    //         authSig: null,
+    //         chain: "baseSepolia",
+    //       });
+
+    //       console.log(resp);
+    //     } catch (error) {
+    //       console.error(error);
+    //     }
+    //   })();`;
+
     const litActionCode = `(async () => {
-      console.log("This is my Lit Action!");
-    })();`;
+      try {
+        const resp = await Lit.Actions.decryptAndCombine({
+          accessControlConditions,
+          ciphertext,
+          dataToEncryptHash,
+          authSig: null,
+          chain: "baseSepolia",
+        });
+
+        console.log(resp);
+      } catch (error) {
+        console.error(error);
+        }
+      })();`;
+
+    const accessControlConditions = [
+      {
+        contractAddress: "",
+        standardContractType: "",
+        chain: "baseSepolia", // specify the blockchain
+        method: "",
+        parameters: [":userAddress"],
+        returnValueTest: {
+          comparator: "=",
+          value: "0xc6CD7CdFa6500F63e669930e30ED32BBEC9890eC",
+        },
+      },
+    ];
+
+    const sessionSig = await this.getSessionSignatures();
     const results = await litNodeClient.executeJs({
       code: litActionCode,
-      sessionSigs: this.getSessionSignatures,
-      jsParams: {},
+      sessionSigs: sessionSig,
+      jsParams: {
+        ciphertext,
+        dataToEncryptHash,
+        accessControlConditions,
+      },
     });
     console.log("Lit Action Results:", results);
   }
