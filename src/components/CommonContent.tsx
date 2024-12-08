@@ -13,7 +13,6 @@ import {
 } from "@lit-protocol/auth-helpers";
 import {
   LitNodeClient,
-  decryptToString,
   encryptString,
 } from "@lit-protocol/lit-node-client";
 
@@ -85,7 +84,7 @@ const CommonContent: React.FC<{ pageType: "insurance" | "health" }> = ({
     const connectToLit = async () => {
       if (!litNodeClient) {
         const client = new LitNodeClient({
-          litNetwork: LIT_NETWORK.DatilDev,
+          litNetwork: LIT_NETWORK.DatilDev as any,
           debug: false,
         });
 

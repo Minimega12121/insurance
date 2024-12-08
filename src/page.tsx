@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import CommonContent from "@/components/CommonContent";
 import { ShieldCheck, HeartPulse, Info, Send } from "lucide-react";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -9,8 +9,8 @@ const BasePage: React.FC<{
   description: string;
   page: "insurance" | "health";
 }> = ({ title, icon, description, page }) => {
-  const [responseData, setResponseData] = useState<string | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  // const [responseData, setResponseData] = useState<string | null>(null);
+  // const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // useEffect(() => {
   //   const fetchData = async () => {
@@ -53,7 +53,7 @@ const BasePage: React.FC<{
         <p className="text-xl text-gray-600 mb-8">{description}</p>
         <CommonContent pageType={page} />
         
-        {responseData && (
+        {/* {responseData && (
           <div className="mt-6 bg-gray-100 p-4 rounded-md shadow-md">
             <h2 className="text-lg font-semibold text-gray-800">API Response:</h2>
             <pre className="text-gray-700 mt-2">{JSON.stringify(responseData, null, 2)}</pre>
@@ -65,7 +65,7 @@ const BasePage: React.FC<{
             <h2 className="text-lg font-semibold text-red-800">Error:</h2>
             <p className="text-red-700 mt-2">{errorMessage}</p>
           </div>
-        )}
+        )} */}
       </div>
 
       <Dialog>
