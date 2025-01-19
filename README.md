@@ -18,6 +18,8 @@ The platform integrates blockchain, AI, and secure data handling mechanisms to c
 - **Ethereum Attestation Service (EAS)**: Verifies authenticity of health records and claim approvals.
 
 ---
+## Video demo 
+https://www.youtube.com/watch?v=yfKAiwU7HaQ
 
 ## Key Features
 
